@@ -1,0 +1,44 @@
+services:
+  php:
+    image: php:8.5-cli
+    container_name: php
+    command:
+      php -S 0.0.0.0:8080 -t public/
+    environment:
+      - SYMFONY_ENV=dev
+    volumes:
+      - ./backend:/var/www/html
+    ports:
+      - "8080:8080"
+    depends_on:
+      - database
+
+  database:
+    image: postgres:18.3
+    container_name: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_DATABASE}
+      PGDATA: /var/lib/postgresql/18/docker
+    volumes:
+      - database:/var/lib/postgresql
+
+  react:
+    image: node:25
+    user: "node"
+    container_name: node
+    working_dir: /home/node/app
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - ./frontend:/home/node/app
+    ports:
+      - "5173:5173"
+    depends_on:
+      - php
+
+volumes:
+  database:
