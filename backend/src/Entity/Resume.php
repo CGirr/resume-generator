@@ -54,9 +54,30 @@ class Resume
     #[ORM\OneToMany(targetEntity: Experience::class, mappedBy: 'resume')]
     private Collection $experiences;
 
+    /**
+     * @var Collection<int, Tag>
+     */
+    #[ORM\ManyToMany(targetEntity: Tag::class, inversedBy: 'resumes')]
+    private Collection $tags;
+
+    /**
+     * @var Collection<int, CvLanguage>
+     */
+    #[ORM\OneToMany(targetEntity: CvLanguage::class, mappedBy: 'cv')]
+    private Collection $languages;
+
+    /**
+     * @var Collection<int, Training>
+     */
+    #[ORM\OneToMany(targetEntity: Training::class, mappedBy: 'resume')]
+    private Collection $trainings;
+
     public function __construct()
     {
         $this->experiences = new ArrayCollection();
+        $this->tags = new ArrayCollection();
+        $this->languages = new ArrayCollection();
+        $this->trainings = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -93,7 +114,7 @@ class Resume
         return $this->birthDate;
     }
 
-    public function setBirthDate(\DateTimeImmutable $birthDate): static
+    public function setBirthDate(?\DateTimeImmutable $birthDate): static
     {
         $this->birthDate = $birthDate;
 
@@ -208,6 +229,68 @@ class Resume
             // set the owning side to null (unless already changed)
             if ($experience->getResume() === $this) {
                 $experience->setResume(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Tag>
+     */
+    public function getTags(): Collection
+    {
+        return $this->tags;
+    }
+
+    public function addTag(Tag $tag): static
+    {
+        if (!$this->tags->contains($tag)) {
+            $this->tags->add($tag);
+        }
+
+        return $this;
+    }
+
+    public function removeTag(Tag $tag): static
+    {
+        $this->tags->removeElement($tag);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, CvLanguage>
+     */
+    public function getLanguages(): Collection
+    {
+        return $this->languages;
+    }
+
+    /**
+     * @return Collection<int, Training>
+     */
+    public function getTrainings(): Collection
+    {
+        return $this->trainings;
+    }
+
+    public function addTraining(Training $training): static
+    {
+        if (!$this->trainings->contains($training)) {
+            $this->trainings->add($training);
+            $training->setResume($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTraining(Training $training): static
+    {
+        if ($this->trainings->removeElement($training)) {
+            // set the owning side to null (unless already changed)
+            if ($training->getResume() === $this) {
+                $training->setResume(null);
             }
         }
 
