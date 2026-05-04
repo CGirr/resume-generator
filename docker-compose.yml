@@ -32,10 +32,14 @@ services:
     working_dir: /home/node/app
     environment:
       NODE_ENV: development
+      CHOKIDAR_USEPOLLING: "true"
     volumes:
       - ./frontend:/home/node/app
+      - frontend_node_modules:/home/node/app/node_modules
     ports:
       - "5173:5173"
+    command: npm run dev -- --host 0.0.0.0
 
 volumes:
   database:
+  frontend_node_modules:
