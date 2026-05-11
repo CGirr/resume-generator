@@ -1,7 +1,7 @@
 import {useState} from "react";
 
-export default function LanguageSection( { resumeId }) {
-    const [languages, setLanguages] = useState([]);
+export default function LanguageSection( { resumeId, initialLanguages = [] }) {
+    const [languages, setLanguages] = useState(initialLanguages);
     const [showForm, setShowForm] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [formData, setFormData ] = useState({

@@ -1,7 +1,7 @@
 import {useState} from "react";
 
-export default function ExperienceSection( { resumeId }) {
-    const [experiences, setExperiences] = useState([]);
+export default function ExperienceSection( { resumeId, initialExperiences = [] }) {
+    const [experiences, setExperiences] = useState(initialExperiences);
     const [showForm, setShowForm] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [formData, setFormData ] = useState({

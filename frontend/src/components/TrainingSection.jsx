@@ -1,7 +1,7 @@
 import {useState} from "react";
 
-export default function TrainingSection( { resumeId }) {
-    const [trainings, setTrainings] = useState([]);
+export default function TrainingSection( { resumeId, initialTrainings = [] }) {
+    const [trainings, setTrainings] = useState(initialTrainings);
     const [showForm, setShowForm] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [formData, setFormData ] = useState({

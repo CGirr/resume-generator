@@ -1,12 +1,11 @@
 import {useState} from "react";
 
-export default function TagSection( { resumeId, title, type } ) {
-    const [tags, setTags] = useState([]);
+export default function TagSection( { resumeId, title, type, initialTags = [] } ) {
+    const [tags, setTags] = useState(initialTags);
     const [showForm, setShowForm] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [formData, setFormData ] = useState({
         name: "",
-        type: "",
     })
 
     function handleChange(e) {
@@ -20,7 +19,8 @@ export default function TagSection( { resumeId, title, type } ) {
         e.preventDefault();
         const payload = {
             ...formData,
-            type: type,
+            type,
+            resumes: [`/api/resumes/${resumeId}`],
         }
 
         setIsSubmitting(true);
@@ -39,17 +39,6 @@ export default function TagSection( { resumeId, title, type } ) {
                 throw new Error("Erreur lors de l'ajout")
             }
             setTags(prev => [...prev, data]);
-
-            const patch = await fetch(`http://localhost:8080/api/resumes/${resumeId}`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/merge-patch+json',
-                },
-                body: JSON.stringify({
-                    tags: [...tags.map(tag => tag['@id']), data['@id']],
-                }),
-            })
-
             setShowForm(false);
         } catch (error) {
             console.error(error);

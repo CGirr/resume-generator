@@ -30,14 +30,20 @@ export default function ResumeLoader( { resumeId, onBack } ) {
                 const data = await response.json();
 
                 if (!response.ok) {
-                    throw new Error("Impossible de charger le CV");
+                    throw new Error(data.detail || "Impossible de charger le CV");
                 }
 
-                const languages = await fetchIriList(data.languages);
+                const languages = await fetchIriList(data.languages || []);
+                const experiences = await fetchIriList(data.experiences || []);
+                const trainings = await fetchIriList(data.trainings || []);
+                const tags = await fetchIriList(data.tags || []);
 
                 setResume({
                     ...data,
                     languages,
+                    experiences,
+                    trainings,
+                    tags,
                 });
             } catch (error) {
                 setError(error.message);

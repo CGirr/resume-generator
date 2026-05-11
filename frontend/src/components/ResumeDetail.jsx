@@ -11,11 +11,32 @@ export default function ResumeDetail( { resume, onBack }) {
             </button>
             <h1>Détails du CV n°{resume.id}</h1>
             <h2>{resume.firstName} {resume.lastName}</h2>
-            <ExperienceSection resumeId={resume.id} />
-            <TrainingSection resumeId={resume.id} />
-            <TagSection resumeId={resume.id} type="compétence" title="Compétences" />
-            <TagSection resumeId={resume.id} type="hobby" title="Loisirs" />
-            <TagSection resumeId={resume.id} type="atout" title="Atouts" />
+            <ExperienceSection
+                resumeId={resume.id}
+                initialExperiences={resume.experiences}
+            />
+            <TrainingSection
+                resumeId={resume.id}
+                initialTrainings={resume.trainings}
+            />
+            <TagSection
+                resumeId={resume.id}
+                type="compétence"
+                title="Compétences"
+                initialTags={resume.tags.filter(tag => tag.type === "compétence")}
+            />
+            <TagSection
+                resumeId={resume.id}
+                type="hobby"
+                title="Loisirs"
+                initialTags={resume.tags.filter(tag => tag.type === "hobby")}
+            />
+            <TagSection
+                resumeId={resume.id}
+                type="atout"
+                title="Atouts"
+                initialTags={resume.tags.filter(tag => tag.type === "atout")}
+            />
             <LanguageSection
                 resumeId={resume.id}
                 initialLanguages={resume.languages}
