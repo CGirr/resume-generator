@@ -1,6 +1,6 @@
 import {useState} from "react";
 
-export default function Form() {
+export default function Form({ onSuccess }) {
 
     const [formData, setFormData] = useState({
         firstName: "",
@@ -15,10 +15,10 @@ export default function Form() {
     });
 
     const [step, setStep] = useState(1);
-
     const totalSteps = 3;
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [error, setError] = useState(null);
 
-    const [createdResume, setCreatedResume] = useState(null);
 
     function handleChange(e) {
         setFormData(prev => ({
@@ -39,18 +39,32 @@ export default function Form() {
             trainings: [],
         };
 
-        const response = await fetch("http://localhost:8080/api/resumes", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/ld+json",
-            },
-            body: JSON.stringify(payload),
-        });
+        setError(null);
+        setIsSubmitting(true);
 
-        const data = await response.json();
-        console.log(data);
+        try {
+            const response = await fetch("http://localhost:8080/api/resumes", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/ld+json",
+                },
+                body: JSON.stringify(payload),
+            });
 
-        setCreatedResume(data);
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.detail || "Impossible de créer le CV, veuillez réessayer plus tard.");
+            }
+            console.log(data);
+            onSuccess(data.id);
+
+        } catch (error) {
+            console.error(error);
+            setError(error.message);
+        } finally {
+            setIsSubmitting(false);
+        }
     }
 
     return (
@@ -103,14 +117,14 @@ export default function Form() {
                     </button>
                 )}
                 {step === totalSteps && (
-                    <button type="submit">
-                        Créer mon CV
+                    <button type="submit" disabled={isSubmitting}>
+                        {isSubmitting ? "Création en cours..." : "Créez votre CV !"}
                     </button>
                 )}
             </form>
             <p>Etape {step} sur {totalSteps}</p>
-            {createdResume && (
-                <p>CV créé avec l'id {createdResume.id}</p>
+            {error && (
+                <p style={{color: "red"}}>{error}</p>
             )}
         </>
     );

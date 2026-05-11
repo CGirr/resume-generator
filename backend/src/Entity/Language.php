@@ -4,8 +4,6 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\LanguageRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: LanguageRepository::class)]
@@ -20,16 +18,12 @@ class Language
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    /**
-     * @var Collection<int, CvLanguage>
-     */
-    #[ORM\OneToMany(targetEntity: CvLanguage::class, mappedBy: 'language')]
-    private Collection $cvLanguages;
+    #[ORM\Column(length: 10)]
+    private ?string $level = null;
 
-    public function __construct()
-    {
-        $this->cvLanguages = new ArrayCollection();
-    }
+    #[ORM\ManyToOne(inversedBy: 'languages')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Resume $resume = null;
 
     public function getId(): ?int
     {
@@ -48,32 +42,26 @@ class Language
         return $this;
     }
 
-    /**
-     * @return Collection<int, CvLanguage>
-     */
-    public function getCvLanguages(): Collection
+    public function getLevel(): ?string
     {
-        return $this->cvLanguages;
+        return $this->level;
     }
 
-    public function addCvLanguage(CvLanguage $cvLanguage): static
+    public function setLevel(string $level): static
     {
-        if (!$this->cvLanguages->contains($cvLanguage)) {
-            $this->cvLanguages->add($cvLanguage);
-            $cvLanguage->setLanguage($this);
-        }
+        $this->level = $level;
 
         return $this;
     }
 
-    public function removeCvLanguage(CvLanguage $cvLanguage): static
+    public function getResume(): ?Resume
     {
-        if ($this->cvLanguages->removeElement($cvLanguage)) {
-            // set the owning side to null (unless already changed)
-            if ($cvLanguage->getLanguage() === $this) {
-                $cvLanguage->setLanguage(null);
-            }
-        }
+        return $this->resume;
+    }
+
+    public function setResume(?Resume $resume): static
+    {
+        $this->resume = $resume;
 
         return $this;
     }

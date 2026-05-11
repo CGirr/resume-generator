@@ -61,9 +61,9 @@ class Resume
     private Collection $tags;
 
     /**
-     * @var Collection<int, CvLanguage>
+     * @var Collection<int, Language>
      */
-    #[ORM\OneToMany(targetEntity: CvLanguage::class, mappedBy: 'cv')]
+    #[ORM\OneToMany(targetEntity: Language::class, mappedBy: 'resume')]
     private Collection $languages;
 
     /**
@@ -260,11 +260,32 @@ class Resume
     }
 
     /**
-     * @return Collection<int, CvLanguage>
+     * @return Collection<int, Language>
      */
     public function getLanguages(): Collection
     {
         return $this->languages;
+    }
+
+    public function addLanguage(Language $language): static
+    {
+        if (!$this->languages->contains($language)) {
+            $this->languages->add($language);
+            $language->setResume($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLanguage(Language $language): static
+    {
+        if ($this->languages->removeElement($language)) {
+            if ($language->getResume() === $this) {
+                $language->setResume(null);
+            }
+        }
+
+        return $this;
     }
 
     /**
